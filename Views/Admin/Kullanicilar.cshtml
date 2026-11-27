@@ -1,0 +1,70 @@
+@model List<KullaniciSatiri>
+@{
+    ViewData["Title"] = "Kullanıcılar";
+}
+
+<div class="arac-cubugu">
+    <form method="get" class="arama">
+        <input name="ara" value="@ViewBag.Ara" placeholder="Ad, kullanıcı adı veya e-posta ara">
+        <button class="dugme ikincil" type="submit">Ara</button>
+    </form>
+    <span class="soluk">@Model.Count kayıtlı kullanıcı</span>
+</div>
+
+@if (Model.Count == 0)
+{
+    <div class="bos">Kayıtlı kullanıcı bulunamadı.</div>
+}
+else
+{
+    <div class="tablo-kutu">
+        <table>
+            <thead>
+                <tr><th></th><th>Ad soyad</th><th>E-posta</th><th>Telefon</th><th>Ev adresi</th><th>Kayıt</th><th>Bilet</th><th>Profil</th><th></th></tr>
+            </thead>
+            <tbody>
+                @foreach (var s in Model)
+                {
+                    var k = s.Kullanici;
+                    <tr>
+                        <td>
+                            @if (k.FotoYolu != null)
+                            {
+                                <img class="tablo-foto" src="@k.FotoYolu" alt="">
+                            }
+                            else
+                            {
+                                <div class="tablo-foto bos-foto">@k.AdSoyad.Substring(0, 1)</div>
+                            }
+                        </td>
+                        <td>
+                            <div class="kalin">@k.AdSoyad</div>
+                            <div class="kucuk soluk">@@@k.KullaniciAdi</div>
+                        </td>
+                        <td>@(k.Eposta ?? "-")</td>
+                        <td>@(k.Telefon ?? "-")</td>
+                        <td class="adres-hucre" title="@k.Adres">@(k.Adres ?? "-")</td>
+                        <td>@k.KayitTarihi.ToString("dd.MM.yyyy")</td>
+                        <td>@s.AktifBilet</td>
+                        <td>
+                            @if (k.ProfilEksik)
+                            {
+                                <span class="etiket-rozet etiket-sari">Eksik</span>
+                            }
+                            else
+                            {
+                                <span class="etiket-rozet etiket-yesil">Tamam</span>
+                            }
+                        </td>
+                        <td>
+                            <form asp-action="KullaniciSil" asp-route-id="@k.Id" method="post"
+                                  data-onay="@k.AdSoyad silinsin mi?@(s.AktifBilet > 0 ? $" {s.AktifBilet} aktif bileti de silinecek." : "")">
+                                <button class="dugme tehlike kucuk-dugme" type="submit">Sil</button>
+                            </form>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+}

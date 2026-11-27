@@ -1,0 +1,36 @@
+@model SifremiUnuttumModel
+@{
+    Layout = "_GirisLayout";
+    ViewData["Title"] = "FlightOps • Şifremi Unuttum";
+}
+
+<form asp-action="SifremiUnuttum" method="post" class="kart kart-akis" autocomplete="off">
+    <div class="kart-ust">
+        <div>
+            <div class="baslik-yazi-akis">Şifremi Unuttum</div>
+            <div class="alt-yazi-akis">Kullanıcı adınızı ve kayıtlı e-postanızı girin</div>
+        </div>
+        <img class="kart-logo-akis logo" src="~/img/logo.png" alt="">
+    </div>
+
+    <div asp-validation-summary="ModelOnly" class="dogrulama-ozeti"></div>
+
+    <label class="etiket-akis" asp-for="KullaniciAdi"></label>
+    <input class="alan-akis" asp-for="KullaniciAdi" autofocus>
+    <span class="alan-hatasi" asp-validation-for="KullaniciAdi"></span>
+
+    <label class="etiket-akis" asp-for="Eposta"></label>
+    <input class="alan-akis" asp-for="Eposta">
+    <span class="alan-hatasi" asp-validation-for="Eposta"></span>
+
+    <label class="etiket-akis" asp-for="YeniSifre"></label>
+    <input class="alan-akis" asp-for="YeniSifre" autocomplete="new-password">
+    <span class="alan-hatasi" asp-validation-for="YeniSifre"></span>
+
+    <label class="etiket-akis" asp-for="YeniSifreTekrar"></label>
+    <input class="alan-akis" asp-for="YeniSifreTekrar" autocomplete="new-password">
+    <span class="alan-hatasi" asp-validation-for="YeniSifreTekrar"></span>
+
+    <button class="dugme giris-dugmesi-akis" type="submit">Şifremi Yenile</button>
+    <a class="kayit-baglantisi-akis" asp-action="Giris">Giriş ekranına dön</a>
+</form>

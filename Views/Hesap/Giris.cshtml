@@ -1,0 +1,47 @@
+@model GirisModel
+@{
+    Layout = "_GirisLayout";
+    ViewData["Title"] = "FlightOps";
+}
+
+<form asp-action="Giris" method="post" class="kart" autocomplete="off">
+    <input type="hidden" asp-for="DonusAdresi">
+
+    <div class="baslik-yazi">FlightOps</div>
+    <div class="alt-yazi">Uçuş Yönetim Sistemi</div>
+    <img class="kart-logo logo" src="~/img/logo.png" alt="">
+
+    <label class="etiket etiket-kullanici" asp-for="KullaniciAdi">Kullanıcı adı</label>
+    <input class="alan alan-kullanici" asp-for="KullaniciAdi" tabindex="1" autofocus>
+
+    <label class="etiket etiket-sifre" asp-for="Sifre">Şifre</label>
+    <input class="alan alan-sifre" asp-for="Sifre" tabindex="2">
+    <a class="sifremi-unuttum" asp-action="SifremiUnuttum" tabindex="4">Şifremi unuttum</a>
+
+    <button class="dugme giris-dugmesi" type="submit" tabindex="3">Giriş Yap</button>
+
+    <a class="kayit-baglantisi" asp-action="Kayit">Hesabınız yok mu? Kayıt olun</a>
+</form>
+
+@section Scripts {
+    @{
+        // Eski uygulamadaki MessageBox yerine aynı uyarı
+        var hata = ViewBag.Hata as string
+            ?? (ViewData.ModelState.IsValid ? null : "Kullanıcı adı ve şifre zorunludur.");
+    }
+    @if (TempData["Bilgi"] is string bilgi)
+    {
+        <script>
+            window.addEventListener("load", () => alert(@Json.Serialize(bilgi)));
+        </script>
+    }
+    @if (hata != null)
+    {
+        <script>
+            window.addEventListener("load", () => {
+                alert(@Json.Serialize(hata));
+                document.getElementById("@Html.IdFor(m => m.Sifre)").focus();
+            });
+        </script>
+    }
+}

@@ -1,0 +1,82 @@
+@{
+    // Rolüne göre sol menü
+    var menu = new List<(string Ad, string Controller, string Action)>();
+    string panelAdi;
+
+    if (User.IsInRole(nameof(Rol.Admin)))
+    {
+        panelAdi = "Admin Paneli";
+        menu.Add(("Personeller", "Admin", "Personeller"));
+        menu.Add(("Kullanıcılar", "Admin", "Kullanicilar"));
+        menu.Add(("Uçuşlar", "Personel", "Index"));
+        menu.Add(("Biletler", "Admin", "Biletler"));
+        menu.Add(("Raporlar", "Admin", "Raporlar"));
+    }
+    else if (User.IsInRole(nameof(Rol.Personel)))
+    {
+        panelAdi = "Personel Paneli";
+        menu.Add(("Uçuşlar", "Personel", "Index"));
+        menu.Add(("Uçuş Ekle", "Personel", "UcusEkle"));
+    }
+    else
+    {
+        panelAdi = "Kullanıcı Paneli";
+        menu.Add(("Uçuşlar", "Kullanici", "Index"));
+        menu.Add(("Biletlerim", "Kullanici", "Biletlerim"));
+        menu.Add(("Profilim", "Kullanici", "Profil"));
+        menu.Add(("Şifre Değiştir", "Kullanici", "SifreDegistir"));
+    }
+
+    var seciliMenu = ViewData["Menu"] as string ?? ViewData["Title"] as string;
+    var adSoyad = User.FindFirst("AdSoyad")?.Value ?? User.Identity?.Name;
+}
+<!doctype html>
+<html lang="tr">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>FlightOps • @ViewData["Title"]</title>
+    <link rel="icon" type="image/png" href="~/img/logo.png">
+    <link rel="stylesheet" href="~/css/site.css" asp-append-version="true">
+</head>
+<body>
+    <div class="ana-panel">
+        <nav class="menu">
+            <div class="menu-baslik">
+                <img class="menu-logo logo" src="~/img/logo.png" alt="">
+                <span>FlightOps</span>
+            </div>
+            <div class="panel-adi">@panelAdi</div>
+            <div class="menu-dugmeleri">
+                @foreach (var m in menu)
+                {
+                    <a class="dugme @(m.Ad == seciliMenu ? "secili" : "")" asp-controller="@m.Controller" asp-action="@m.Action">@m.Ad</a>
+                }
+            </div>
+        </nav>
+
+        <header class="ust-baslik">
+            <div class="sayfa-adi">@ViewData["Title"]</div>
+            <div class="ust-sag">
+                @if (User.FindFirst("Foto")?.Value is string foto)
+                {
+                    <img class="ust-foto" src="@foto" alt="">
+                }
+                <span class="kullanici-adi">@adSoyad</span>
+                <div id="saat" class="saat"></div>
+                <form asp-controller="Hesap" asp-action="Cikis" method="post">
+                    <button class="dugme cikis" type="submit">Çıkış</button>
+                </form>
+            </div>
+        </header>
+
+        <main class="icerik">
+            <partial name="_Mesajlar" />
+            @RenderBody()
+        </main>
+    </div>
+
+    <script src="~/js/site.js" asp-append-version="true"></script>
+    @await RenderSectionAsync("Scripts", required: false)
+</body>
+</html>

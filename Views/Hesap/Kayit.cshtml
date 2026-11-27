@@ -1,0 +1,57 @@
+@model KayitModel
+@{
+    Layout = "_GirisLayout";
+    ViewData["Title"] = "FlightOps • Kayıt Ol";
+}
+
+<form asp-action="Kayit" method="post" enctype="multipart/form-data" class="kart kart-akis kart-genis" autocomplete="off">
+    <div class="kart-ust">
+        <div>
+            <div class="baslik-yazi-akis">Kayıt Ol</div>
+            <div class="alt-yazi-akis">FlightOps kullanıcı hesabı</div>
+        </div>
+        <img class="kart-logo-akis logo" src="~/img/logo.png" alt="">
+    </div>
+
+    <div asp-validation-summary="ModelOnly" class="dogrulama-ozeti"></div>
+
+    <div class="kayit-foto">
+        <img id="foto-onizleme" class="personel-foto yuvarlak" hidden alt="">
+        <div id="foto-yok" class="personel-foto yuvarlak bos-foto">📷</div>
+        <div>
+            <label class="dugme ikincil kucuk-dugme dosya-sec">
+                Profil Fotoğrafı Seç *
+                <input asp-for="Foto" type="file" accept="image/*" hidden data-onizleme="foto-onizleme">
+            </label>
+            <div class="kucuk soluk">JPG, PNG, WEBP veya GIF · en fazla 5 MB</div>
+            <span class="alan-hatasi" asp-validation-for="Foto"></span>
+        </div>
+    </div>
+
+    <label class="etiket-akis" asp-for="AdSoyad"></label>
+    <input class="alan-akis" asp-for="AdSoyad" autofocus>
+    <span class="alan-hatasi" asp-validation-for="AdSoyad"></span>
+
+    <label class="etiket-akis" asp-for="KullaniciAdi"></label>
+    <input class="alan-akis" asp-for="KullaniciAdi">
+    <span class="alan-hatasi" asp-validation-for="KullaniciAdi"></span>
+
+    <label class="etiket-akis" asp-for="Eposta"></label>
+    <input class="alan-akis" asp-for="Eposta">
+    <span class="alan-hatasi" asp-validation-for="Eposta"></span>
+
+    <label class="etiket-akis" asp-for="Adres">Ev adresi *</label>
+    <textarea class="alan-akis alan-cok-satir" asp-for="Adres" rows="2" placeholder="Mahalle, cadde/sokak, bina no, daire, ilçe / il"></textarea>
+    <span class="alan-hatasi" asp-validation-for="Adres"></span>
+
+    <label class="etiket-akis" asp-for="Sifre"></label>
+    <input class="alan-akis" asp-for="Sifre">
+    <span class="alan-hatasi" asp-validation-for="Sifre"></span>
+
+    <label class="etiket-akis" asp-for="SifreTekrar"></label>
+    <input class="alan-akis" asp-for="SifreTekrar">
+    <span class="alan-hatasi" asp-validation-for="SifreTekrar"></span>
+
+    <button class="dugme giris-dugmesi-akis" type="submit">Kayıt Ol</button>
+    <a class="kayit-baglantisi-akis" asp-action="Giris">Zaten hesabınız var mı? Giriş yapın</a>
+</form>

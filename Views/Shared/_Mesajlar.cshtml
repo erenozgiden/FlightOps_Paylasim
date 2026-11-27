@@ -1,0 +1,8 @@
+@if (TempData["Mesaj"] is string mesaj)
+{
+    <div class="bildirim basarili">@mesaj</div>
+}
+@if (TempData["Hata"] is string hata)
+{
+    <div class="bildirim hatali">@hata</div>
+}

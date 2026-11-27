@@ -1,0 +1,121 @@
+@model UcusFiltreModel
+@{
+    ViewData["Title"] = "Uçuşlar";
+}
+
+@{
+    var sehirSecenekleri = Model.Sehirler.Select(s => new SelectListItem(s, s));
+}
+
+<section class="harita-karti">
+    <form method="get" id="ucus-filtre" class="filtre harita-filtre">
+        <div class="alan-grubu">
+            <label for="Kalkis">Nereden</label>
+            <select asp-for="Kalkis" asp-items="sehirSecenekleri">
+                <option value="">Tüm şehirler</option>
+            </select>
+        </div>
+        <button type="button" id="yer-degistir" class="dugme ikincil yer-degistir" title="Nereden ve Nereye'yi değiştir">⇄</button>
+        <div class="alan-grubu">
+            <label for="Varis">Nereye</label>
+            <select asp-for="Varis" asp-items="sehirSecenekleri">
+                <option value="">Tüm şehirler</option>
+            </select>
+        </div>
+        <div class="alan-grubu">
+            <label asp-for="Tarih"></label>
+            <input asp-for="Tarih" type="date">
+        </div>
+        <div class="alan-grubu">
+            <label asp-for="Durum"></label>
+            <select asp-for="Durum" asp-items="Html.GetEnumSelectList<UcusDurumu>()">
+                <option value="">Tümü</option>
+            </select>
+        </div>
+        <div class="filtre-dugmeleri">
+            <button class="dugme ana" type="submit">Filtrele</button>
+            <a class="dugme ikincil" asp-action="Index">Temizle</a>
+        </div>
+    </form>
+
+    <div class="harita-kutu">
+        <svg id="harita" role="img" aria-label="Türkiye uçuş haritası"></svg>
+        <div id="harita-ipucu" class="harita-ipucu" hidden></div>
+        <div class="harita-aciklama">
+            <span><i class="lejant" style="background:var(--mavi)"></i>Planlandı</span>
+            <span><i class="lejant" style="background:var(--yesil)"></i>Biniş</span>
+            <span><i class="lejant" style="background:var(--sari)"></i>Gecikmeli</span>
+            <span><i class="lejant" style="background:var(--soluk)"></i>Kalktı / İndi</span>
+            <span><i class="lejant" style="background:var(--kirmizi)"></i>İptal</span>
+            <span class="soluk">Şehre tıklayarak nereden / nereye seçin · Rotaya tıklayınca uçuşa gider</span>
+        </div>
+    </div>
+</section>
+
+<div class="soluk sonuc-sayisi">
+    @Model.Ucuslar.Count uçuş bulundu
+    @if (!string.IsNullOrEmpty(Model.Kalkis) || !string.IsNullOrEmpty(Model.Varis))
+    {
+        <span>· @(string.IsNullOrEmpty(Model.Kalkis) ? "Her yerden" : Model.Kalkis) → @(string.IsNullOrEmpty(Model.Varis) ? "her yere" : Model.Varis)</span>
+    }
+</div>
+
+@if (Model.Ucuslar.Count == 0)
+{
+    <div class="bos">Aramanıza uygun uçuş yok.</div>
+}
+else
+{
+    <div class="ucus-listesi">
+        @foreach (var s in Model.Ucuslar)
+        {
+            var u = s.Ucus;
+            <div class="ucus-karti" id="ucus-@u.Id">
+                <div class="ucus-no">
+                    <div class="kalin">@u.UcusNo</div>
+                    <span class="etiket-rozet @u.Durum.DurumSinifi()">@u.Durum.Ad()</span>
+                </div>
+                <div class="ucus-guzergah">
+                    <div>
+                        <div class="saat-buyuk">@u.KalkisZamani.ToString("HH:mm")</div>
+                        <div class="soluk">@u.Kalkis</div>
+                    </div>
+                    <div class="ucus-cizgi">
+                        <span class="kucuk soluk">@((u.VarisZamani - u.KalkisZamani).ToString(@"h\s\a\ m\d\k"))</span>
+                        <div class="cizgi"></div>
+                        <span class="kucuk soluk">@u.KalkisZamani.ToString("dd MMMM ddd")</span>
+                    </div>
+                    <div>
+                        <div class="saat-buyuk">@u.VarisZamani.ToString("HH:mm")</div>
+                        <div class="soluk">@u.Varis</div>
+                    </div>
+                </div>
+                <div class="ucus-detay">
+                    <div class="kucuk soluk">Kapı: @(u.Kapi ?? "-")</div>
+                    <div class="kucuk soluk">@s.BosKoltuk boş koltuk</div>
+                </div>
+                <div class="ucus-fiyat">
+                    <div class="fiyat">@u.Fiyat.Tl()</div>
+                    @if (s.KullanicininBileti)
+                    {
+                        <a class="dugme ikincil kucuk-dugme" asp-action="Biletlerim">Biletiniz var</a>
+                    }
+                    else if (s.BiletAlinabilir)
+                    {
+                        <a class="dugme ana kucuk-dugme" asp-action="Odeme" asp-route-id="@u.Id">Bilet Al</a>
+                    }
+                    else
+                    {
+                        <span class="kucuk soluk">Satışta değil</span>
+                    }
+                </div>
+            </div>
+        }
+    </div>
+}
+
+@section Scripts {
+    <script type="application/json" id="harita-json">@Json.Serialize(Model.Harita)</script>
+    <script src="~/js/harita-veri.js" asp-append-version="true"></script>
+    <script src="~/js/harita.js" asp-append-version="true"></script>
+}

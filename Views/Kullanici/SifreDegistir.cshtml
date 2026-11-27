@@ -1,0 +1,26 @@
+@model SifreDegistirModel
+@{
+    ViewData["Title"] = "Şifre Değiştir";
+}
+
+<form asp-action="SifreDegistir" method="post" class="form-kutu dar">
+    <div class="alan-grubu">
+        <label asp-for="MevcutSifre"></label>
+        <input asp-for="MevcutSifre" autocomplete="current-password">
+        <span class="alan-hatasi" asp-validation-for="MevcutSifre"></span>
+    </div>
+    <div class="alan-grubu">
+        <label asp-for="YeniSifre"></label>
+        <input asp-for="YeniSifre" autocomplete="new-password">
+        <span class="alan-hatasi" asp-validation-for="YeniSifre"></span>
+    </div>
+    <div class="alan-grubu">
+        <label asp-for="YeniSifreTekrar"></label>
+        <input asp-for="YeniSifreTekrar" autocomplete="new-password">
+        <span class="alan-hatasi" asp-validation-for="YeniSifreTekrar"></span>
+    </div>
+
+    <div class="form-dugmeleri">
+        <button class="dugme ana" type="submit">Şifreyi Değiştir</button>
+    </div>
+</form>

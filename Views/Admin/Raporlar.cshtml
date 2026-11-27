@@ -1,0 +1,101 @@
+@model RaporModel
+@{
+    ViewData["Title"] = "Raporlar";
+    var enYuksekGunluk = Math.Max(1, Model.SonYediGun.Max(g => g.Adet));
+    var enYuksekDurum = Math.Max(1, Model.DurumDagilimi.Max(d => d.Sayi));
+}
+
+<div class="arac-cubugu">
+    <span class="soluk">Rapor tarihi: @DateTime.Now.ToString("dd.MM.yyyy HH:mm")</span>
+    <div class="arac-dugmeleri">
+        <a class="dugme ikincil" asp-action="VeritabaniIndir" title="Tüm veritabanını MySQL'e aktarılabilen tek bir .sql dosyası olarak indirir">Veritabanını İndir (.sql)</a>
+        <button class="dugme ikincil" type="button" onclick="window.print()">Yazdır / PDF</button>
+    </div>
+</div>
+
+<div class="istatistikler">
+    <div class="istatistik"><div class="sayi">@Model.ToplamUcus</div><div class="soluk">Toplam uçuş</div></div>
+    <div class="istatistik"><div class="sayi">@Model.AktifBilet</div><div class="soluk">Satılan bilet</div></div>
+    <div class="istatistik"><div class="sayi">@Model.ToplamGelir.Tl()</div><div class="soluk">Toplam gelir</div></div>
+    <div class="istatistik"><div class="sayi">%@((Model.OrtalamaDoluluk * 100).ToString("0.#"))</div><div class="soluk">Ortalama doluluk</div></div>
+    <div class="istatistik"><div class="sayi">@Model.ToplamPersonel</div><div class="soluk">Personel</div></div>
+    <div class="istatistik"><div class="sayi">@Model.ToplamKullanici</div><div class="soluk">Kayıtlı kullanıcı</div></div>
+</div>
+
+<div class="rapor-izgara">
+    <section class="kutu">
+        <h3>Son 7 gün bilet satışı</h3>
+        <div class="cubuk-grafik">
+            @foreach (var g in Model.SonYediGun)
+            {
+                <div class="cubuk-sutun" title="@g.Adet bilet, @g.Tutar.Tl()">
+                    <span class="cubuk-deger">@g.Adet</span>
+                    <div class="cubuk" style="height:@(g.Adet * 100 / enYuksekGunluk)%"></div>
+                    <span class="cubuk-etiket">@g.Gun.ToString("dd.MM")</span>
+                </div>
+            }
+        </div>
+    </section>
+
+    <section class="kutu">
+        <h3>Uçuş durumları</h3>
+        @foreach (var d in Model.DurumDagilimi)
+        {
+            <div class="yatay-satir">
+                <span class="yatay-ad">@d.Durum.Ad()</span>
+                <div class="yatay-iz"><div class="yatay-dolgu" style="width:@(d.Sayi * 100 / enYuksekDurum)%"></div></div>
+                <span class="yatay-sayi">@d.Sayi</span>
+            </div>
+        }
+    </section>
+</div>
+
+<section class="kutu">
+    <h3>Uçuş bazında doluluk ve gelir</h3>
+    <div class="tablo-kutu">
+        <table>
+            <thead><tr><th>Uçuş</th><th>Güzergah</th><th>Kalkış</th><th>Durum</th><th>Satılan / Kapasite</th><th>Doluluk</th><th>Gelir</th></tr></thead>
+            <tbody>
+                @foreach (var u in Model.UcusBazinda)
+                {
+                    <tr>
+                        <td class="kalin">@u.UcusNo</td>
+                        <td>@u.Guzergah</td>
+                        <td>@u.KalkisZamani.ToString("dd.MM.yyyy HH:mm")</td>
+                        <td><span class="etiket-rozet @u.Durum.DurumSinifi()">@u.Durum.Ad()</span></td>
+                        <td>@u.SatilanBilet / @u.Kapasite</td>
+                        <td>
+                            <div class="doluluk"><div class="doluluk-dolgu" style="width:@((u.Doluluk * 100).ToString("0"))%"></div></div>
+                            <span class="kucuk">%@((u.Doluluk * 100).ToString("0.0"))</span>
+                        </td>
+                        <td>@u.Gelir.Tl()</td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+</section>
+
+<section class="kutu">
+    <h3>En çok bilet alan yolcular</h3>
+    @if (Model.EnCokBiletAlanlar.Count == 0)
+    {
+        <div class="bos">Henüz bilet satışı yok.</div>
+    }
+    else
+    {
+        <div class="tablo-kutu">
+            <table>
+                <thead><tr><th>#</th><th>Yolcu</th><th>Bilet</th><th>Harcama</th></tr></thead>
+                <tbody>
+                    @{ int sira = 1; }
+                    @foreach (var y in Model.EnCokBiletAlanlar)
+                    {
+                        <tr><td>@(sira++)</td><td>@y.AdSoyad</td><td>@y.BiletSayisi</td><td>@y.Harcama.Tl()</td></tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    }
+    <p class="kucuk soluk">İptal edilen bilet sayısı: @Model.IptalBilet</p>
+</section>

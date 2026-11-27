@@ -1,0 +1,54 @@
+@model List<Bilet>
+@{
+    ViewData["Title"] = "Biletlerim";
+}
+
+@if (Model.Count == 0)
+{
+    <div class="bos">
+        Henüz biletiniz yok.
+        <a asp-action="Index">Uçuşlara göz atın</a>
+    </div>
+}
+else
+{
+    <div class="bilet-listesi">
+        @foreach (var b in Model)
+        {
+            var u = b.Ucus!;
+            bool iptalEdilebilir = b.Durum == BiletDurumu.Aktif && u.Durum is not (UcusDurumu.Kalkti or UcusDurumu.Indi);
+            <div class="bilet @(b.Durum == BiletDurumu.Iptal ? "iptal" : "")">
+                <div class="bilet-sol">
+                    <div class="kucuk soluk">UÇUŞ</div>
+                    <div class="bilet-ucus">@u.UcusNo</div>
+                    <div>@u.Kalkis → @u.Varis</div>
+                    <div class="soluk">@u.KalkisZamani.ToString("dd MMMM yyyy, HH:mm")</div>
+                </div>
+                <div class="bilet-orta">
+                    <div><span class="kucuk soluk">Koltuk</span><div class="kalin">@b.KoltukNo</div></div>
+                    <div><span class="kucuk soluk">Kapı</span><div class="kalin">@(u.Kapi ?? "-")</div></div>
+                    <div><span class="kucuk soluk">Fiyat</span><div class="kalin">@b.Fiyat.Tl()</div></div>
+                    <div><span class="kucuk soluk">Ödeme</span><div class="kalin odeme-bilgisi">@b.OdemeBilgisi</div></div>
+                    <div><span class="kucuk soluk">Uçuş durumu</span><div><span class="etiket-rozet @u.Durum.DurumSinifi()">@u.Durum.Ad()</span></div></div>
+                </div>
+                <div class="bilet-sag">
+                    <div class="kucuk soluk">Bilet #@b.Id</div>
+                    @if (b.Durum == BiletDurumu.Iptal)
+                    {
+                        <span class="etiket-rozet etiket-kirmizi">İptal edildi</span>
+                    }
+                    else if (iptalEdilebilir)
+                    {
+                        <form asp-action="BiletIptal" asp-route-id="@b.Id" method="post" data-onay="@u.UcusNo biletiniz iptal edilsin mi?">
+                            <button class="dugme tehlike kucuk-dugme" type="submit">İptal Et</button>
+                        </form>
+                    }
+                    else
+                    {
+                        <span class="etiket-rozet etiket-yesil">Aktif</span>
+                    }
+                </div>
+            </div>
+        }
+    </div>
+}

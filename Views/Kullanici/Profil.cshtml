@@ -1,0 +1,61 @@
+@model ProfilModel
+@{
+    ViewData["Title"] = "Profilim";
+    bool fotoYok = string.IsNullOrEmpty(Model.MevcutFotoYolu);
+}
+
+@if (fotoYok || string.IsNullOrWhiteSpace(Model.Adres))
+{
+    <div class="uyari-kutusu">
+        <strong>Profilinizi tamamlayın.</strong>
+        Uçuşları görmek ve bilet almak için profil fotoğrafı ve ev adresi eklemeniz zorunludur.
+    </div>
+}
+
+<form asp-action="Profil" method="post" enctype="multipart/form-data" class="form-kutu">
+    <div class="form-izgara">
+        <div class="foto-alani">
+            <img id="foto-onizleme" class="personel-foto buyuk yuvarlak" src="@Model.MevcutFotoYolu" alt="" hidden="@fotoYok">
+            @if (fotoYok)
+            {
+                <div id="foto-yok" class="personel-foto buyuk yuvarlak bos-foto">📷</div>
+            }
+            <label class="dugme @(fotoYok ? "ana" : "ikincil") kucuk-dugme dosya-sec">
+                @(fotoYok ? "Fotoğraf Yükle *" : "Fotoğrafı Değiştir")
+                <input asp-for="Foto" type="file" accept="image/*" hidden data-onizleme="foto-onizleme">
+            </label>
+            <span class="alan-hatasi" asp-validation-for="Foto"></span>
+        </div>
+
+        <div class="alanlar">
+            <div class="alan-grubu">
+                <label asp-for="KullaniciAdi"></label>
+                <input asp-for="KullaniciAdi" readonly class="salt-okunur">
+            </div>
+            <div class="alan-grubu">
+                <label asp-for="AdSoyad"></label>
+                <input asp-for="AdSoyad">
+                <span class="alan-hatasi" asp-validation-for="AdSoyad"></span>
+            </div>
+            <div class="alan-grubu">
+                <label asp-for="Eposta"></label>
+                <input asp-for="Eposta">
+                <span class="alan-hatasi" asp-validation-for="Eposta"></span>
+            </div>
+            <div class="alan-grubu">
+                <label asp-for="Telefon"></label>
+                <input asp-for="Telefon">
+                <span class="alan-hatasi" asp-validation-for="Telefon"></span>
+            </div>
+            <div class="alan-grubu tam-genislik">
+                <label asp-for="Adres">Ev adresi *</label>
+                <textarea asp-for="Adres" rows="3" placeholder="Mahalle, cadde/sokak, bina no, daire, ilçe / il"></textarea>
+                <span class="alan-hatasi" asp-validation-for="Adres"></span>
+            </div>
+        </div>
+    </div>
+
+    <div class="form-dugmeleri">
+        <button class="dugme ana" type="submit">Kaydet</button>
+    </div>
+</form>

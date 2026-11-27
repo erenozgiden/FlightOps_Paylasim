@@ -1,0 +1,89 @@
+@model PersonelFormModel
+@{
+    bool yeni = Model.Id == 0;
+    ViewData["Title"] = yeni ? "Personel Ekle" : "Personel Düzenle";
+    ViewData["Menu"] = "Personeller";
+}
+
+<form asp-action="@(yeni ? "PersonelEkle" : "PersonelDuzenle")" method="post" enctype="multipart/form-data" class="form-kutu">
+    <input type="hidden" asp-for="Id">
+    <div asp-validation-summary="ModelOnly" class="dogrulama-ozeti"></div>
+
+    <div class="form-izgara">
+        <div class="foto-alani">
+            @if (Model.MevcutFotoYolu != null)
+            {
+                <img id="foto-onizleme" class="personel-foto buyuk" src="@Model.MevcutFotoYolu" alt="">
+            }
+            else
+            {
+                <img id="foto-onizleme" class="personel-foto buyuk" hidden alt="">
+                <div id="foto-yok" class="personel-foto buyuk bos-foto">?</div>
+            }
+            <label class="dugme ikincil kucuk-dugme dosya-sec">
+                Fotoğraf Seç
+                <input asp-for="Foto" type="file" accept="image/*" hidden>
+            </label>
+            <span class="alan-hatasi" asp-validation-for="Foto"></span>
+            @if (Model.MevcutFotoYolu != null)
+            {
+                <label class="onay-kutusu"><input asp-for="FotoyuKaldir"> Fotoğrafı kaldır</label>
+            }
+        </div>
+
+        <div class="alanlar">
+            <div class="alan-grubu">
+                <label asp-for="AdSoyad"></label>
+                <input asp-for="AdSoyad">
+                <span class="alan-hatasi" asp-validation-for="AdSoyad"></span>
+            </div>
+            <div class="alan-grubu">
+                <label asp-for="Gorev"></label>
+                <input asp-for="Gorev" list="gorevler" placeholder="Pilot, Kabin Memuru ...">
+                <datalist id="gorevler">
+                    <option>Pilot</option><option>Yardımcı Pilot</option><option>Kabin Memuru</option>
+                    <option>Operasyon Sorumlusu</option><option>Yer Hizmetleri</option><option>Teknisyen</option>
+                </datalist>
+            </div>
+            <div class="alan-grubu">
+                <label asp-for="KullaniciAdi"></label>
+                <input asp-for="KullaniciAdi" autocomplete="off">
+                <span class="alan-hatasi" asp-validation-for="KullaniciAdi"></span>
+            </div>
+            <div class="alan-grubu">
+                <label asp-for="Sifre">@(yeni ? "Şifre" : "Yeni şifre (boş bırakılırsa değişmez)")</label>
+                <input asp-for="Sifre" autocomplete="new-password">
+                <span class="alan-hatasi" asp-validation-for="Sifre"></span>
+            </div>
+            <div class="alan-grubu">
+                <label asp-for="Eposta"></label>
+                <input asp-for="Eposta">
+                <span class="alan-hatasi" asp-validation-for="Eposta"></span>
+            </div>
+            <div class="alan-grubu">
+                <label asp-for="Telefon"></label>
+                <input asp-for="Telefon">
+                <span class="alan-hatasi" asp-validation-for="Telefon"></span>
+            </div>
+        </div>
+    </div>
+
+    <div class="form-dugmeleri">
+        <a class="dugme ikincil" asp-action="Personeller">Vazgeç</a>
+        <button class="dugme ana" type="submit">@(yeni ? "Ekle" : "Kaydet")</button>
+    </div>
+</form>
+
+@section Scripts {
+    <script>
+        // Seçilen fotoğrafı hemen önizle
+        document.getElementById("Foto").addEventListener("change", (e) => {
+            const dosya = e.target.files[0];
+            if (!dosya) return;
+            const img = document.getElementById("foto-onizleme");
+            img.src = URL.createObjectURL(dosya);
+            img.hidden = false;
+            document.getElementById("foto-yok")?.remove();
+        });
+    </script>
+}

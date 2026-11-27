@@ -1,0 +1,58 @@
+@model List<Bilet>
+@{
+    ViewData["Title"] = "Biletler";
+    var seciliDurum = ViewBag.Durum as BiletDurumu?;
+}
+
+<div class="arac-cubugu">
+    <form method="get" class="arama">
+        <input name="ara" value="@ViewBag.Ara" placeholder="Uçuş no veya yolcu ara">
+        <select name="durum">
+            <option value="">Tüm biletler</option>
+            <option value="Aktif" selected="@(seciliDurum == BiletDurumu.Aktif)">Aktif</option>
+            <option value="Iptal" selected="@(seciliDurum == BiletDurumu.Iptal)">İptal</option>
+        </select>
+        <button class="dugme ikincil" type="submit">Filtrele</button>
+    </form>
+    <span class="soluk">@Model.Count bilet</span>
+</div>
+
+@if (Model.Count == 0)
+{
+    <div class="bos">Bilet bulunamadı.</div>
+}
+else
+{
+    <div class="tablo-kutu">
+        <table>
+            <thead>
+                <tr><th>No</th><th>Yolcu</th><th>Uçuş</th><th>Güzergah</th><th>Kalkış</th><th>Koltuk</th><th>Fiyat</th><th>Ödeme</th><th>Alış</th><th>Durum</th><th></th></tr>
+            </thead>
+            <tbody>
+                @foreach (var b in Model)
+                {
+                    <tr class="@(b.Durum == BiletDurumu.Iptal ? "soluk-satir" : "")">
+                        <td>#@b.Id</td>
+                        <td>@b.Kullanici!.AdSoyad</td>
+                        <td class="kalin">@b.Ucus!.UcusNo</td>
+                        <td>@b.Ucus.Kalkis → @b.Ucus.Varis</td>
+                        <td>@b.Ucus.KalkisZamani.ToString("dd.MM.yyyy HH:mm")</td>
+                        <td>@b.KoltukNo</td>
+                        <td>@b.Fiyat.Tl()</td>
+                        <td class="odeme-bilgisi" title="@b.KartSahibi">@b.OdemeBilgisi</td>
+                        <td>@b.SatinAlmaTarihi.ToString("dd.MM.yyyy")</td>
+                        <td><span class="etiket-rozet @(b.Durum == BiletDurumu.Aktif ? "etiket-yesil" : "etiket-kirmizi")">@(b.Durum == BiletDurumu.Aktif ? "Aktif" : "İptal")</span></td>
+                        <td>
+                            @if (b.Durum == BiletDurumu.Aktif)
+                            {
+                                <form asp-action="BiletIptal" asp-route-id="@b.Id" method="post" data-onay="#@b.Id numaralı bilet iptal edilsin mi?">
+                                    <button class="dugme tehlike kucuk-dugme" type="submit">İptal Et</button>
+                                </form>
+                            }
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+}

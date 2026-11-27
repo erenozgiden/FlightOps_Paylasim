@@ -1,0 +1,71 @@
+@model Ucus
+@{
+    bool yeni = Model.Id == 0;
+    ViewData["Title"] = yeni ? "Uçuş Ekle" : "Uçuş Düzenle";
+    ViewData["Menu"] = yeni ? "Uçuş Ekle" : "Uçuşlar";
+}
+
+<form asp-action="@(yeni ? "UcusEkle" : "UcusDuzenle")" method="post" class="form-kutu">
+    <input type="hidden" asp-for="Id">
+    <div asp-validation-summary="ModelOnly" class="dogrulama-ozeti"></div>
+
+    <div class="alanlar iki-sutun">
+        <div class="alan-grubu">
+            <label asp-for="UcusNo"></label>
+            <input asp-for="UcusNo" placeholder="TK101" style="text-transform:uppercase">
+            <span class="alan-hatasi" asp-validation-for="UcusNo"></span>
+        </div>
+        <div class="alan-grubu">
+            <label asp-for="Durum"></label>
+            <select asp-for="Durum" asp-items="Html.GetEnumSelectList<UcusDurumu>()"></select>
+        </div>
+        <div class="alan-grubu">
+            <label asp-for="Kalkis"></label>
+            <input asp-for="Kalkis" placeholder="İstanbul (IST)" list="havalimanlari">
+            <span class="alan-hatasi" asp-validation-for="Kalkis"></span>
+        </div>
+        <div class="alan-grubu">
+            <label asp-for="Varis"></label>
+            <input asp-for="Varis" placeholder="Ankara (ESB)" list="havalimanlari">
+            <span class="alan-hatasi" asp-validation-for="Varis"></span>
+        </div>
+        <div class="alan-grubu">
+            <label asp-for="KalkisZamani"></label>
+            <input asp-for="KalkisZamani" type="datetime-local" asp-format="{0:yyyy-MM-ddTHH:mm}">
+            <span class="alan-hatasi" asp-validation-for="KalkisZamani"></span>
+        </div>
+        <div class="alan-grubu">
+            <label asp-for="VarisZamani"></label>
+            <input asp-for="VarisZamani" type="datetime-local" asp-format="{0:yyyy-MM-ddTHH:mm}">
+            <span class="alan-hatasi" asp-validation-for="VarisZamani"></span>
+        </div>
+        <div class="alan-grubu">
+            <label asp-for="Kapi"></label>
+            <input asp-for="Kapi" placeholder="A3">
+        </div>
+        <div class="alan-grubu">
+            <label asp-for="Kapasite"></label>
+            <input asp-for="Kapasite" type="number" min="1" max="600">
+            <span class="alan-hatasi" asp-validation-for="Kapasite"></span>
+        </div>
+        <div class="alan-grubu">
+            <label asp-for="Fiyat"></label>
+            <input asp-for="Fiyat" asp-format="{0:0.##}" inputmode="decimal">
+            <span class="alan-hatasi" asp-validation-for="Fiyat"></span>
+        </div>
+    </div>
+
+    <!-- Haritada gösterilebilmesi için şehirler bu listeden seçilmeli -->
+    <datalist id="havalimanlari">
+        @foreach (var h in FlightOps.Data.Havalimanlari.Liste)
+        {
+            <option value="@h.Etiket">@h.Ad@(h.YurtDisi ? " · yurt dışı" : "")</option>
+        }
+    </datalist>
+    <p class="kucuk soluk">Kalkış ve varışı listeden seçin (örn. "İstanbul (IST)"); böylece uçuş kullanıcıların haritasında görünür.</p>
+
+    <div class="form-dugmeleri">
+        <a class="dugme ikincil" asp-action="Index">Vazgeç</a>
+        <button class="dugme ana" type="submit">@(yeni ? "Ekle" : "Kaydet")</button>
+    </div>
+</form>

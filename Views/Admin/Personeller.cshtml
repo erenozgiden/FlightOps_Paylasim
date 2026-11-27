@@ -1,0 +1,48 @@
+@model List<Kullanici>
+@{
+    ViewData["Title"] = "Personeller";
+}
+
+<div class="arac-cubugu">
+    <form method="get" class="arama">
+        <input name="ara" value="@ViewBag.Ara" placeholder="Ad, kullanıcı adı veya görev ara">
+        <button class="dugme ikincil" type="submit">Ara</button>
+    </form>
+    <a class="dugme ana" asp-action="PersonelEkle">+ Personel Ekle</a>
+</div>
+
+@if (Model.Count == 0)
+{
+    <div class="bos">Kayıtlı personel yok.</div>
+}
+else
+{
+    <div class="kart-izgara">
+        @foreach (var p in Model)
+        {
+            <div class="personel-karti">
+                @if (p.FotoYolu != null)
+                {
+                    <img class="personel-foto" src="@p.FotoYolu" alt="@p.AdSoyad">
+                }
+                else
+                {
+                    <div class="personel-foto bos-foto">@p.AdSoyad.Substring(0, 1)</div>
+                }
+                <div class="personel-bilgi">
+                    <div class="personel-ad">@p.AdSoyad</div>
+                    <div class="soluk">@(p.Gorev ?? "Görev belirtilmemiş")</div>
+                    <div class="kucuk">@@@p.KullaniciAdi</div>
+                    @if (!string.IsNullOrEmpty(p.Telefon)) { <div class="kucuk">📞 @p.Telefon</div> }
+                    @if (!string.IsNullOrEmpty(p.Eposta)) { <div class="kucuk">✉ @p.Eposta</div> }
+                </div>
+                <div class="personel-islem">
+                    <a class="dugme ikincil kucuk-dugme" asp-action="PersonelDuzenle" asp-route-id="@p.Id">Düzenle</a>
+                    <form asp-action="PersonelSil" asp-route-id="@p.Id" method="post" data-onay="@p.AdSoyad silinsin mi?">
+                        <button class="dugme tehlike kucuk-dugme" type="submit">Sil</button>
+                    </form>
+                </div>
+            </div>
+        }
+    </div>
+}

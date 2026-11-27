@@ -1,0 +1,56 @@
+@model List<Ucus>
+@{
+    ViewData["Title"] = "Uçuşlar";
+}
+
+<div class="arac-cubugu">
+    <form method="get" class="arama">
+        <input name="ara" value="@ViewBag.Ara" placeholder="Uçuş no, şehir veya kapı ara">
+        <button class="dugme ikincil" type="submit">Ara</button>
+    </form>
+    <a class="dugme ana" asp-action="UcusEkle">+ Uçuş Ekle</a>
+</div>
+
+@if (Model.Count == 0)
+{
+    <div class="bos">Uçuş bulunamadı.</div>
+}
+else
+{
+    <div class="tablo-kutu">
+        <table>
+            <thead>
+                <tr><th>Uçuş no</th><th>Kalkış</th><th>Varış</th><th>Kalkış zamanı</th><th>Varış zamanı</th><th>Kapı</th><th>Doluluk</th><th>Fiyat</th><th>Durum</th><th></th></tr>
+            </thead>
+            <tbody>
+                @foreach (var u in Model)
+                {
+                    var satilan = u.Biletler.Count(b => b.Durum == BiletDurumu.Aktif);
+                    <tr>
+                        <td class="kalin">@u.UcusNo</td>
+                        <td>@u.Kalkis</td>
+                        <td>@u.Varis</td>
+                        <td>@u.KalkisZamani.ToString("dd.MM.yyyy HH:mm")</td>
+                        <td>@u.VarisZamani.ToString("dd.MM.yyyy HH:mm")</td>
+                        <td>@(u.Kapi ?? "-")</td>
+                        <td>@satilan / @u.Kapasite</td>
+                        <td>@u.Fiyat.Tl()</td>
+                        <td>
+                            <form asp-action="DurumGuncelle" asp-route-id="@u.Id" method="post">
+                                <select name="durum" class="durum-sec @u.Durum.DurumSinifi()" onchange="this.form.submit()"
+                                        asp-items="Html.GetEnumSelectList<UcusDurumu>().Select(i => { i.Selected = i.Value == ((int)u.Durum).ToString(); return i; })"></select>
+                            </form>
+                        </td>
+                        <td class="islemler">
+                            <a class="dugme ikincil kucuk-dugme" asp-action="UcusDuzenle" asp-route-id="@u.Id">Düzenle</a>
+                            <form asp-action="UcusSil" asp-route-id="@u.Id" method="post"
+                                  data-onay="@u.UcusNo uçuşu silinsin mi?@(satilan > 0 ? $" Bu uçuşa ait {satilan} bilet de silinecek." : "")">
+                                <button class="dugme tehlike kucuk-dugme" type="submit">Sil</button>
+                            </form>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+}

@@ -1,0 +1,421 @@
+/* Renkler eski Windows Forms uygulamasıyla aynı */
+:root {
+  --zemin: rgb(24, 25, 27);
+  --kart: rgb(37, 39, 42);
+  --kart-acik: rgb(45, 48, 52);
+  --secili: rgb(49, 78, 73);
+  --soluk: rgb(211, 215, 217);
+  --sonuk: rgb(140, 146, 150);
+  --alan: rgb(55, 58, 62);
+  --cizgi: rgb(62, 66, 70);
+  --beyaz: #ffffff;
+  --yesil: rgb(86, 190, 150);
+  --kirmizi: rgb(232, 96, 90);
+  --sari: rgb(232, 190, 90);
+  --mavi: rgb(110, 160, 240);
+}
+
+* { box-sizing: border-box; }
+
+html, body {
+  margin: 0;
+  height: 100%;
+  background: var(--zemin);
+  color: var(--beyaz);
+  font-family: "Segoe UI", system-ui, sans-serif;
+  font-size: 14px;
+}
+
+a { color: var(--yesil); }
+[hidden] { display: none !important; }
+
+/* ===================== Giriş ekranı (eskisiyle birebir) ===================== */
+
+.giris-zemini {
+  position: fixed;
+  inset: 0;
+  overflow: auto;
+  display: grid;
+  place-items: center;
+  background: var(--zemin);
+}
+
+.arka-plan {
+  position: fixed;
+  inset: -20px;
+  background-image: url(../img/arkaplan.jpg);
+  background-size: 100% 100%;
+  background-repeat: no-repeat;
+  filter: blur(8px);
+}
+
+.kart {
+  position: relative;
+  width: 380px;
+  height: 365px;
+  background: var(--kart);
+}
+
+.kart > * { position: absolute; }
+
+.baslik-yazi { left: 28px; top: 20px; font-size: 36px; line-height: 1.2; }
+.alt-yazi    { left: 30px; top: 73px; font-size: 15px; color: var(--soluk); }
+.kart-logo   { left: 292px; top: 22px; width: 58px; height: 58px; object-fit: contain; }
+
+.etiket { left: 30px; font-size: 13px; color: var(--soluk); }
+.etiket-kullanici { top: 114px; }
+.etiket-sifre     { top: 181px; }
+
+.alan {
+  left: 30px;
+  width: 320px;
+  height: 30px;
+  padding: 2px 4px;
+  font: 16px "Segoe UI", system-ui, sans-serif;
+  background: var(--alan);
+  color: var(--beyaz);
+  border: 1px solid rgb(80, 84, 88);
+  outline: none;
+}
+.alan:focus { border-color: var(--soluk); }
+.alan-kullanici { top: 139px; }
+.alan-sifre     { top: 206px; }
+
+.giris-dugmesi { left: 30px; top: 260px; width: 320px; height: 43px; background: var(--secili); }
+
+.sifremi-unuttum { right: 30px; top: 239px; font-size: 12px; color: var(--soluk); }
+.sifremi-unuttum:hover, .kayit-baglantisi:hover { color: var(--beyaz); }
+
+.kayit-baglantisi { left: 30px; top: 318px; width: 320px; text-align: center; font-size: 13px; color: var(--soluk); }
+
+/* Kayıt sayfası: aynı kart, alanlar alt alta akar */
+.kart-akis { height: auto; padding: 20px 30px 22px; margin: 24px 0; }
+.kart-akis > * { position: static; }
+.kart-ust { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 12px; }
+.baslik-yazi-akis { font-size: 30px; line-height: 1.2; }
+.alt-yazi-akis { font-size: 14px; color: var(--soluk); }
+.kart-logo-akis { width: 52px; height: 52px; object-fit: contain; }
+.etiket-akis { display: block; margin-top: 10px; font-size: 13px; color: var(--soluk); }
+.alan-akis {
+  display: block; width: 100%; height: 30px; margin-top: 4px; padding: 2px 6px;
+  font: 15px "Segoe UI", system-ui, sans-serif;
+  background: var(--alan); color: var(--beyaz); border: 1px solid rgb(80, 84, 88); outline: none;
+}
+.alan-akis:focus { border-color: var(--soluk); }
+.giris-dugmesi-akis { display: block; width: 100%; height: 43px; margin-top: 18px; background: var(--secili); }
+.kayit-baglantisi-akis { display: block; margin-top: 12px; text-align: center; font-size: 13px; color: var(--soluk); }
+
+/* ===================== Düğmeler ===================== */
+
+.dugme {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border: 0;
+  border-radius: 0;
+  padding: 0 16px;
+  height: 36px;
+  color: var(--beyaz);
+  background: var(--kart-acik);
+  font: 600 14px "Segoe UI", system-ui, sans-serif;
+  text-decoration: none;
+  cursor: pointer;
+  white-space: nowrap;
+}
+.dugme:hover { filter: brightness(1.15); }
+.dugme.ana { background: var(--secili); }
+.dugme.ikincil { background: var(--alan); }
+.dugme.tehlike { background: rgb(110, 45, 45); }
+.kucuk-dugme { height: 30px; padding: 0 12px; font-size: 13px; }
+
+/* ===================== Ana panel ===================== */
+
+.ana-panel {
+  position: fixed;
+  inset: 0;
+  display: grid;
+  grid-template-columns: 185px 1fr;
+  grid-template-rows: 67px 1fr;
+}
+
+.menu { grid-row: 1 / span 2; position: relative; background: var(--kart); }
+
+.menu-baslik {
+  position: absolute; left: 14px; top: 19px;
+  display: flex; align-items: center; gap: 4px; font-size: 20px;
+}
+.menu-logo { width: 34px; height: 34px; object-fit: contain; }
+
+.panel-adi {
+  position: absolute; left: 14px; top: 58px;
+  font-size: 11px; letter-spacing: .06em; text-transform: uppercase; color: var(--sonuk);
+}
+
+.menu-dugmeleri { position: absolute; left: 12px; top: 84px; display: grid; gap: 6px; }
+.menu-dugmeleri .dugme { width: 161px; height: 42px; font-size: 15px; background: var(--kart); }
+.menu-dugmeleri .dugme.secili { background: var(--secili); }
+
+.ust-baslik { display: flex; justify-content: space-between; align-items: center; gap: 12px; padding-right: 14px; }
+.sayfa-adi { padding-left: 18px; font-size: 27px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.ust-sag { display: flex; align-items: center; gap: 14px; }
+.kullanici-adi { color: var(--soluk); }
+.ust-foto { width: 34px; height: 34px; border-radius: 50%; object-fit: cover; margin-right: -6px; }
+
+/* Profil fotoğrafı ve adres */
+.yuvarlak { border-radius: 50%; }
+.uyari-kutusu { padding: 12px 14px; margin-bottom: 12px; background: rgba(232, 190, 90, .14); border-left: 4px solid var(--sari); }
+.tam-genislik { grid-column: 1 / -1; }
+textarea {
+  padding: 8px 10px; font: 14px "Segoe UI", system-ui, sans-serif; resize: vertical;
+  background: var(--alan); color: var(--beyaz); border: 1px solid rgb(80, 84, 88); border-radius: 0; outline: none;
+}
+textarea:focus { border-color: var(--soluk); }
+.kart-genis { width: 420px; }
+.kayit-foto { display: flex; align-items: center; gap: 14px; margin: 6px 0 4px; }
+.kayit-foto .personel-foto { width: 64px; height: 64px; flex: none; }
+.alan-cok-satir { height: auto; min-height: 54px; padding: 6px; }
+.saat { width: 110px; text-align: center; font-size: 21px; font-weight: 700; }
+.ust-sag form { margin: 0; }
+.cikis { height: 32px; background: var(--alan); }
+
+.icerik { overflow: auto; padding: 8px 18px 28px; }
+
+/* ===================== Ortak içerik ===================== */
+
+.kalin { font-weight: 600; }
+.soluk { color: var(--soluk); }
+.kucuk { font-size: 12px; }
+
+.bildirim { padding: 10px 14px; margin-bottom: 12px; transition: opacity .5s; }
+.bildirim.basarili { background: var(--secili); }
+.bildirim.hatali { background: rgb(110, 45, 45); }
+.bildirim.gizle { opacity: 0; }
+
+.bos { padding: 36px; text-align: center; color: var(--soluk); background: var(--kart); }
+.kutu { background: var(--kart); padding: 16px; margin-bottom: 16px; }
+.kutu h3 { margin: 0 0 14px; font-size: 16px; font-weight: 600; }
+
+.arac-cubugu { display: flex; flex-wrap: wrap; gap: 10px; justify-content: space-between; align-items: center; margin-bottom: 14px; }
+.arama { display: flex; flex-wrap: wrap; gap: 8px; }
+.arac-dugmeleri { display: flex; flex-wrap: wrap; gap: 8px; }
+.tablo-foto { width: 36px; height: 36px; border-radius: 50%; object-fit: cover; background: var(--alan); }
+.tablo-foto.bos-foto { font-size: 15px; }
+.adres-hucre { max-width: 220px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+
+input, select, textarea {
+  height: 36px;
+  padding: 0 10px;
+  font: 14px "Segoe UI", system-ui, sans-serif;
+  background: var(--alan);
+  color: var(--beyaz);
+  border: 1px solid rgb(80, 84, 88);
+  border-radius: 0;
+  outline: none;
+  color-scheme: dark;
+}
+input:focus, select:focus { border-color: var(--soluk); }
+.arama input { width: 280px; max-width: 100%; }
+.salt-okunur { color: var(--sonuk); }
+
+/* Tablolar */
+.tablo-kutu { overflow-x: auto; background: var(--kart); }
+table { width: 100%; border-collapse: collapse; }
+th, td { text-align: left; padding: 10px 12px; border-bottom: 1px solid var(--cizgi); white-space: nowrap; }
+th { font-size: 12px; font-weight: 600; color: var(--sonuk); text-transform: uppercase; letter-spacing: .04em; }
+tbody tr:hover { background: var(--kart-acik); }
+td form { display: inline; margin: 0; }
+.islemler { display: flex; gap: 6px; }
+.soluk-satir td { color: var(--sonuk); }
+
+/* Durum rozetleri */
+.etiket-rozet { display: inline-block; padding: 3px 9px; font-size: 12px; font-weight: 600; }
+.etiket-mavi { background: rgba(110, 160, 240, .18); color: var(--mavi); }
+.etiket-yesil { background: rgba(86, 190, 150, .18); color: var(--yesil); }
+.etiket-sari { background: rgba(232, 190, 90, .18); color: var(--sari); }
+.etiket-kirmizi { background: rgba(232, 96, 90, .18); color: var(--kirmizi); }
+.etiket-gri { background: rgba(211, 215, 217, .12); color: var(--soluk); }
+.durum-sec { height: 30px; font-weight: 600; }
+
+/* Formlar */
+.form-kutu { background: var(--kart); padding: 20px; max-width: 860px; }
+.form-kutu.dar { max-width: 460px; }
+.form-izgara { display: grid; grid-template-columns: 170px 1fr; gap: 24px; }
+.alanlar { display: grid; grid-template-columns: 1fr 1fr; gap: 14px 18px; }
+.form-kutu.dar .alanlar, .form-kutu.dar { display: grid; gap: 14px; }
+.alan-grubu { display: grid; gap: 5px; align-content: start; }
+.alan-grubu label { font-size: 13px; color: var(--soluk); }
+.alan-hatasi { font-size: 12px; color: var(--kirmizi); }
+.dogrulama-ozeti { color: var(--kirmizi); }
+.dogrulama-ozeti ul { margin: 0 0 12px; padding-left: 18px; }
+.dogrulama-ozeti.validation-summary-valid { display: none; }
+.form-dugmeleri { display: flex; justify-content: flex-end; gap: 10px; margin-top: 20px; }
+.onay-kutusu { display: flex; align-items: center; gap: 6px; font-size: 13px; color: var(--soluk); }
+.onay-kutusu input { height: auto; }
+
+.foto-alani { display: grid; justify-items: center; align-content: start; gap: 10px; }
+.dosya-sec { cursor: pointer; }
+
+/* Personel kartları */
+.kart-izgara { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 14px; }
+.personel-karti { display: grid; grid-template-columns: 72px 1fr; gap: 6px 14px; padding: 14px; background: var(--kart); }
+.personel-foto { width: 72px; height: 72px; object-fit: cover; background: var(--alan); }
+.personel-foto.buyuk { width: 150px; height: 150px; }
+.bos-foto { display: grid; place-items: center; font-size: 28px; font-weight: 600; color: var(--soluk); }
+.personel-foto.buyuk.bos-foto { font-size: 48px; }
+.personel-bilgi { display: grid; gap: 2px; align-content: start; min-width: 0; }
+.personel-bilgi .kucuk { color: var(--sonuk); overflow: hidden; text-overflow: ellipsis; }
+.personel-ad { font-size: 16px; font-weight: 600; }
+.personel-islem { grid-column: 1 / -1; display: flex; justify-content: flex-end; gap: 6px; margin-top: 6px; }
+.personel-islem form { margin: 0; }
+
+/* Kullanıcı: filtre ve uçuş kartları */
+.filtre { display: flex; flex-wrap: wrap; gap: 12px; align-items: end; background: var(--kart); padding: 14px; margin-bottom: 10px; }
+.filtre .alan-grubu input, .filtre .alan-grubu select { width: 170px; }
+.filtre-dugmeleri { display: flex; gap: 8px; }
+.sonuc-sayisi { margin: 6px 0 10px; }
+
+.ucus-listesi { display: grid; gap: 10px; }
+.ucus-karti {
+  display: grid; grid-template-columns: 110px 1fr 130px 140px; gap: 18px; align-items: center;
+  padding: 14px 18px; background: var(--kart);
+}
+.ucus-no { display: grid; gap: 6px; justify-items: start; }
+.ucus-guzergah { display: grid; grid-template-columns: auto 1fr auto; gap: 16px; align-items: center; }
+.saat-buyuk { font-size: 22px; font-weight: 600; }
+.ucus-cizgi { display: grid; justify-items: center; gap: 12px; }
+.cizgi { width: 100%; height: 1px; background: var(--cizgi); position: relative; }
+.cizgi::after { content: "✈"; position: absolute; left: 50%; top: -9px; transform: translateX(-50%); background: var(--kart); padding: 0 6px; color: var(--soluk); font-size: 13px; }
+.ucus-detay { display: grid; gap: 4px; }
+.ucus-fiyat { display: grid; gap: 6px; justify-items: end; }
+.ucus-fiyat form { margin: 0; }
+.fiyat { font-size: 18px; font-weight: 700; }
+
+/* Türkiye uçuş haritası */
+.harita-karti { background: var(--kart); margin-bottom: 10px; }
+.harita-filtre { margin: 0; background: transparent; border-bottom: 1px solid var(--cizgi); }
+.yer-degistir { width: 40px; padding: 0; font-size: 18px; }
+.harita-kutu { position: relative; padding: 10px 14px 12px; }
+#harita { display: block; width: 100%; height: auto; max-height: 460px; }
+.harita-deniz { fill: rgb(22, 30, 38); }
+.harita-komsu { fill: rgb(38, 41, 45); stroke: rgb(58, 62, 67); stroke-width: .6; }
+.harita-turkiye { fill: rgb(44, 58, 55); stroke: rgb(98, 132, 123); stroke-width: .9; stroke-linejoin: round; }
+
+.rota { cursor: pointer; }
+.rota-alan { fill: none; stroke: transparent; stroke-width: 10; }
+.rota-cizgi { fill: none; stroke-width: 1.8; stroke-linecap: round; }
+.rota.eslesti .rota-cizgi { stroke-dasharray: 6 4; animation: rota-akis 1.2s linear infinite; }
+.rota.eslesti:hover .rota-cizgi, .rota.eslesti:focus .rota-cizgi { stroke-width: 3; }
+.soluk-rota .rota-cizgi { stroke: rgb(120, 128, 134); stroke-opacity: .35; stroke-width: 1.1; }
+.rota-ucak { font-size: 11px; text-anchor: middle; dominant-baseline: central; pointer-events: none; }
+@keyframes rota-akis { to { stroke-dashoffset: -20; } }
+
+.havalimani circle { fill: rgb(150, 156, 160); }
+.havalimani.aktif { cursor: pointer; }
+.havalimani.aktif circle { fill: var(--beyaz); stroke: rgb(22, 30, 38); stroke-width: 1.2; }
+.havalimani.aktif:hover circle:first-child { fill: var(--yesil); }
+.havalimani .secim-halkasi { fill: none !important; stroke-width: 2 !important; }
+.havalimani .tiklama-alani { fill: transparent !important; stroke: none !important; }
+.havalimani.secili-kalkis .secim-halkasi { stroke: var(--yesil) !important; }
+.havalimani.secili-varis .secim-halkasi { stroke: var(--sari) !important; }
+.yurtdisi-nokta { fill: var(--soluk); }
+
+.sehir-yazi { font: 600 10px "Segoe UI", sans-serif; fill: var(--beyaz); paint-order: stroke; stroke: rgb(22, 30, 38); stroke-width: 3px; pointer-events: none; }
+.sehir-yazi.yurtdisi { fill: var(--soluk); font-weight: 400; }
+.sehir-yazi.secili-kalkis { fill: var(--yesil); }
+.sehir-yazi.secili-varis { fill: var(--sari); }
+
+.harita-ipucu {
+  position: absolute; z-index: 5; max-width: 260px; padding: 8px 10px; pointer-events: none;
+  background: rgb(16, 17, 19); border: 1px solid var(--cizgi); font-size: 12px; line-height: 1.5;
+}
+.harita-ipucu em { color: var(--sonuk); font-style: normal; }
+.harita-aciklama { display: flex; flex-wrap: wrap; gap: 6px 16px; margin-top: 8px; font-size: 12px; }
+.harita-aciklama span { display: inline-flex; align-items: center; gap: 6px; }
+.lejant { display: inline-block; width: 14px; height: 3px; }
+
+.ucus-karti.vurgu { animation: vurgu 1.6s ease-out; }
+@keyframes vurgu { from { box-shadow: 0 0 0 2px var(--yesil); background: var(--kart-acik); } to { box-shadow: 0 0 0 2px transparent; } }
+
+/* Biletlerim */
+.bilet-listesi { display: grid; gap: 12px; }
+.bilet { display: grid; grid-template-columns: 1.3fr 2fr auto; background: var(--kart); border-left: 4px solid var(--secili); }
+.bilet.iptal { border-left-color: var(--kirmizi); opacity: .65; }
+.bilet > div { padding: 14px 18px; }
+.bilet-sol { display: grid; gap: 3px; border-right: 1px dashed var(--cizgi); }
+.bilet-ucus { font-size: 22px; font-weight: 700; }
+.bilet-orta { display: grid; grid-template-columns: repeat(5, auto); gap: 18px; align-items: center; }
+.bilet-sag { display: grid; gap: 8px; justify-items: end; align-content: center; }
+.bilet-sag form { margin: 0; }
+
+/* Ödeme */
+.odeme-izgara { display: grid; grid-template-columns: minmax(0, 480px) minmax(0, 340px); gap: 16px; align-items: start; }
+.odeme-formu { display: grid; gap: 14px; }
+.odeme-formu input, .odeme-formu select { width: 100%; min-width: 0; }
+.odeme-formu h3, .odeme-ozeti h3 { margin: 0; font-size: 16px; font-weight: 600; }
+.odeme-formu .form-dugmeleri { margin-top: 4px; }
+.odeme-satir { display: grid; grid-template-columns: 1fr 110px; gap: 14px; }
+.tarih-secimi { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+.guvenlik-notu { margin: 0; line-height: 1.5; }
+
+.kart-onizleme {
+  display: grid; gap: 18px; padding: 20px 22px; height: 200px; align-content: space-between;
+  background: linear-gradient(135deg, rgb(49, 78, 73), rgb(30, 45, 60));
+  box-shadow: 0 8px 24px rgba(0, 0, 0, .35);
+  font-family: "Consolas", "Segoe UI", monospace;
+}
+.kart-onizleme-ust { display: flex; justify-content: space-between; align-items: center; }
+.cip { width: 42px; height: 30px; background: linear-gradient(135deg, #d8c27a, #a88f45); border-radius: 4px; }
+.kart-tipi { font: 700 16px "Segoe UI", sans-serif; letter-spacing: .08em; }
+.kart-numara { font-size: 22px; letter-spacing: .12em; }
+.kart-onizleme-alt { display: flex; justify-content: space-between; text-transform: uppercase; }
+.kart-kucuk { font-size: 10px; color: var(--soluk); letter-spacing: .06em; }
+
+.odeme-ozeti { display: grid; gap: 10px; margin: 0; }
+.ozet-ucus { font-size: 22px; font-weight: 700; }
+.ozet-guzergah { display: grid; grid-template-columns: auto 1fr auto; gap: 12px; align-items: center; text-align: center; padding: 6px 0 10px; border-bottom: 1px solid var(--cizgi); }
+.ozet-satir { display: flex; justify-content: space-between; gap: 10px; }
+.ozet-satir.toplam { padding-top: 10px; border-top: 1px solid var(--cizgi); font-size: 18px; font-weight: 700; }
+
+.odeme-bilgisi { font-family: "Consolas", monospace; }
+
+/* Raporlar */
+.istatistikler { display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 12px; margin-bottom: 16px; }
+.istatistik { background: var(--kart); padding: 14px 16px; border-top: 3px solid var(--secili); }
+.istatistik .sayi { font-size: 24px; font-weight: 700; }
+
+.rapor-izgara { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+
+.cubuk-grafik { display: grid; grid-template-columns: repeat(7, 1fr); gap: 10px; height: 180px; align-items: end; }
+.cubuk-sutun { display: grid; grid-template-rows: auto 1fr auto; height: 100%; justify-items: center; gap: 4px; }
+.cubuk-sutun .cubuk { width: 70%; min-height: 2px; background: var(--yesil); align-self: end; }
+.cubuk-deger { font-size: 12px; color: var(--soluk); }
+.cubuk-etiket { font-size: 12px; color: var(--sonuk); }
+
+.yatay-satir { display: grid; grid-template-columns: 90px 1fr 30px; gap: 10px; align-items: center; margin-bottom: 10px; }
+.yatay-ad { color: var(--soluk); }
+.yatay-iz { height: 12px; background: var(--alan); }
+.yatay-dolgu { height: 100%; background: var(--yesil); }
+.yatay-sayi { text-align: right; font-weight: 600; }
+
+.doluluk { display: inline-block; width: 80px; height: 8px; background: var(--alan); vertical-align: middle; margin-right: 6px; }
+.doluluk-dolgu { height: 100%; background: var(--yesil); }
+
+/* Dar ekranlar */
+@media (max-width: 900px) {
+  .odeme-izgara,
+  .rapor-izgara, .form-izgara, .alanlar { grid-template-columns: 1fr; }
+  .ucus-karti { grid-template-columns: 1fr; }
+  .ucus-fiyat { justify-items: start; }
+  .bilet { grid-template-columns: 1fr; }
+  .bilet-orta { grid-template-columns: repeat(2, auto); }
+}
+
+/* Raporu yazdırırken menü ve başlık gizlenir */
+@media print {
+  body { background: #fff; color: #000; }
+  .menu, .ust-sag, .arac-cubugu .dugme { display: none !important; }
+  .ana-panel { position: static; display: block; }
+  .kutu, .istatistik, .tablo-kutu { background: #fff; color: #000; border: 1px solid #ccc; }
+  .soluk, .kucuk, th { color: #444 !important; }
+  .icerik { overflow: visible; }
+}

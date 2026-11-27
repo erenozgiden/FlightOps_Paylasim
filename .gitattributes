@@ -1,0 +1,6 @@
+# Satır sonlarını Git otomatik düzenlesin (Windows / Linux / Mac uyumu)
+* text=auto
+
+*.sln    text eol=crlf
+*.jpg    binary
+*.png    binary

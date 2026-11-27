@@ -1,0 +1,145 @@
+@model OdemeModel
+@{
+    ViewData["Title"] = "Ödeme";
+    ViewData["Menu"] = "Uçuşlar";
+    var u = Model.Ucus!;
+    var buYil = DateTime.Today.Year;
+}
+
+<div class="odeme-izgara">
+    <form asp-action="Odeme" method="post" class="form-kutu odeme-formu" autocomplete="off">
+        <input type="hidden" asp-for="UcusId">
+        <h3>Kart bilgileri</h3>
+
+        <!-- Kartın canlı önizlemesi -->
+        <div class="kart-onizleme" id="kart-onizleme">
+            <div class="kart-onizleme-ust">
+                <span class="cip"></span>
+                <span id="onizleme-tip" class="kart-tipi">KART</span>
+            </div>
+            <div id="onizleme-numara" class="kart-numara">•••• •••• •••• ••••</div>
+            <div class="kart-onizleme-alt">
+                <div>
+                    <div class="kart-kucuk">KART SAHİBİ</div>
+                    <div id="onizleme-isim">AD SOYAD</div>
+                </div>
+                <div>
+                    <div class="kart-kucuk">SON KULLANMA</div>
+                    <div id="onizleme-tarih">AA/YY</div>
+                </div>
+            </div>
+        </div>
+
+        <div asp-validation-summary="ModelOnly" class="dogrulama-ozeti"></div>
+
+        <div class="alan-grubu">
+            <label asp-for="KartSahibi"></label>
+            <input asp-for="KartSahibi" autocomplete="cc-name" style="text-transform:uppercase">
+            <span class="alan-hatasi" asp-validation-for="KartSahibi"></span>
+        </div>
+
+        <div class="alan-grubu">
+            <label asp-for="KartNumarasi"></label>
+            <input asp-for="KartNumarasi" inputmode="numeric" maxlength="23" placeholder="0000 0000 0000 0000" autocomplete="cc-number">
+            <span class="alan-hatasi" asp-validation-for="KartNumarasi"></span>
+        </div>
+
+        <div class="odeme-satir">
+            <div class="alan-grubu">
+                <label>Son kullanma tarihi</label>
+                <div class="tarih-secimi">
+                    <select asp-for="SonKullanmaAy">
+                        <option value="0">Ay</option>
+                        @for (int ay = 1; ay <= 12; ay++)
+                        {
+                            <option value="@ay">@ay.ToString("00")</option>
+                        }
+                    </select>
+                    <select asp-for="SonKullanmaYil">
+                        <option value="0">Yıl</option>
+                        @for (int yil = buYil; yil <= buYil + 10; yil++)
+                        {
+                            <option value="@yil">@yil</option>
+                        }
+                    </select>
+                </div>
+                <span class="alan-hatasi" asp-validation-for="SonKullanmaAy"></span>
+                <span class="alan-hatasi" asp-validation-for="SonKullanmaYil"></span>
+            </div>
+            <div class="alan-grubu cvv">
+                <label asp-for="Cvv"></label>
+                <input asp-for="Cvv" type="password" inputmode="numeric" maxlength="4" placeholder="•••" autocomplete="cc-csc">
+                <span class="alan-hatasi" asp-validation-for="Cvv"></span>
+            </div>
+        </div>
+
+        <p class="kucuk soluk guvenlik-notu">
+            🔒 Bu bir okul projesidir; gerçek ödeme alınmaz. Kart numarasının tamamı ve CVV kaydedilmez,
+            yalnızca kart sahibi, kart tipi ve son 4 hane saklanır.
+        </p>
+
+        <div class="form-dugmeleri">
+            <a class="dugme ikincil" asp-action="Index">Vazgeç</a>
+            <button class="dugme ana" type="submit">@u.Fiyat.Tl() Öde</button>
+        </div>
+    </form>
+
+    <aside class="kutu odeme-ozeti">
+        <h3>Uçuş özeti</h3>
+        <div class="ozet-ucus">@u.UcusNo</div>
+        <div class="ozet-guzergah">
+            <div>
+                <div class="saat-buyuk">@u.KalkisZamani.ToString("HH:mm")</div>
+                <div class="soluk">@u.Kalkis</div>
+            </div>
+            <div class="soluk">✈</div>
+            <div>
+                <div class="saat-buyuk">@u.VarisZamani.ToString("HH:mm")</div>
+                <div class="soluk">@u.Varis</div>
+            </div>
+        </div>
+        <div class="ozet-satir"><span class="soluk">Tarih</span><span>@u.KalkisZamani.ToString("dd MMMM yyyy, dddd")</span></div>
+        <div class="ozet-satir"><span class="soluk">Kapı</span><span>@(u.Kapi ?? "-")</span></div>
+        <div class="ozet-satir"><span class="soluk">Durum</span><span class="etiket-rozet @u.Durum.DurumSinifi()">@u.Durum.Ad()</span></div>
+        <div class="ozet-satir"><span class="soluk">Boş koltuk</span><span>@Model.BosKoltuk</span></div>
+        <div class="ozet-satir toplam"><span>Toplam</span><span>@u.Fiyat.Tl()</span></div>
+    </aside>
+</div>
+
+@section Scripts {
+    <script>
+        const numara = document.getElementById("KartNumarasi");
+        const isim = document.getElementById("KartSahibi");
+        const ay = document.getElementById("SonKullanmaAy");
+        const yil = document.getElementById("SonKullanmaYil");
+
+        function kartTipi(r) {
+            if (r.startsWith("9792")) return "TROY";
+            if (r.startsWith("4")) return "VISA";
+            if (/^3[47]/.test(r)) return "AMEX";
+            if (/^5[1-5]/.test(r) || (+r.slice(0, 4) >= 2221 && +r.slice(0, 4) <= 2720)) return "MASTERCARD";
+            return "KART";
+        }
+
+        function onizle() {
+            const r = numara.value.replace(/\D/g, "");
+            const gruplu = (r + "•".repeat(Math.max(0, 16 - r.length))).match(/.{1,4}/g).join(" ");
+            document.getElementById("onizleme-numara").textContent = gruplu;
+            document.getElementById("onizleme-tip").textContent = kartTipi(r);
+            document.getElementById("onizleme-isim").textContent = isim.value.trim().toLocaleUpperCase("tr-TR") || "AD SOYAD";
+            const a = ay.value !== "0" ? ay.value.padStart(2, "0") : "AA";
+            const y = yil.value !== "0" ? yil.value.slice(2) : "YY";
+            document.getElementById("onizleme-tarih").textContent = `${a}/${y}`;
+        }
+
+        // Kart numarasını yazarken 4'erli gruplara ayır
+        numara.addEventListener("input", () => {
+            const r = numara.value.replace(/\D/g, "").slice(0, 19);
+            numara.value = r.replace(/(.{4})/g, "$1 ").trim();
+            onizle();
+        });
+        document.getElementById("Cvv").addEventListener("input", (e) => e.target.value = e.target.value.replace(/\D/g, ""));
+        [isim, ay, yil].forEach(el => el.addEventListener("input", onizle));
+        onizle();
+    </script>
+}
